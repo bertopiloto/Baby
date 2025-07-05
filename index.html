@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem para Mavie ou Theo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #fff;
+            position: relative;
+            padding: 15px;
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: floatParticle linear infinite;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(25, 25, 50, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            padding: 25px 20px;
+            z-index: 10;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+            z-index: 20;
+        }
+        
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.8rem;
+            color: #ff9ff3;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(255, 159, 243, 0.7);
+            position: relative;
+            display: inline-block;
+            line-height: 1.2;
+        }
+        
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff9ff3, transparent);
+        }
+        
+        .baby-name-container {
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .baby-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #48dbfb;
+            text-shadow: 0 0 15px rgba(72, 219, 251, 0.7);
+            animation: nameGlow 3s infinite;
+            position: relative;
+            display: inline-block;
+            padding: 0 15px;
+            line-height: 1.2;
+            transition: all 0.5s ease;
+        }
+        
+        .name-switch {
+            display: inline-block;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .name-switch:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        @keyframes nameGlow {
+            0% { text-shadow: 0 0 10px rgba(72, 219, 251, 0.5); }
+            50% { text-shadow: 0 0 25px rgba(72, 219, 251, 1), 0 0 40px rgba(72, 219, 251, 0.7); }
+            100% { text-shadow: 0 0 10px rgba(72, 219, 251, 0.5); }
+        }
+        
+        .baby-info {
+            font-size: 1.2rem;
+            color: #dfe6e9;
+            max-width: 100%;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+            padding: 0 10px;
+        }
+        
+        .countdown-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius: 15px;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .countdown-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .countdown-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff9ff3, #48dbfb, #ff9ff3);
+        }
+        
+        .countdown-value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 5px 0;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(45deg, #ff9ff3, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .countdown-label {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+            color: #dfe6e9;
+        }
+        
+        .animation-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            min-height: 200px;
+            position: relative;
+        }
+        
+        .baby-animation {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .baby {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #ffcdd2 0%, #f8bbd0 100%);
+            border-radius: 50%;
+            z-index: 30;
+            box-shadow: 0 0 30px rgba(233, 30, 99, 0.5);
+            animation: float 4s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .face {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+        
+        .eyes {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 40;
+        }
+        
+        .eye {
+            width: 18px;
+            height: 18px;
+            background: #333;
+            border-radius: 50%;
+            animation: blink 5s infinite;
+        }
+        
+        .mouth {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            border-radius: 0 0 40px 40px;
+            background: #e84393;
+            z-index: 40;
+            animation: smile 6s infinite;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 25px;
+            color: #ff6b6b;
+            animation: heartFloat 8s infinite;
+            opacity: 0;
+            z-index: 20;
+        }
+        
+        .heart:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { top: 5%; left: 80%; animation-delay: 1s; }
+        .heart:nth-child(3) { top: 70%; left: 15%; animation-delay: 2s; }
+        .heart:nth-child(4) { top: 80%; left: 75%; animation-delay: 3s; }
+        
+        .progress-container {
+            width: 100%;
+            margin: 25px auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9ff3, #48dbfb);
+            width: 66%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 0 0 15px rgba(72, 219, 251, 0.5);
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px 0 15px;
+            color: #aaa;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) translateY(-15px) rotate(3deg); }
+            100% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes blink {
+            0%, 45%, 55%, 100% { height: 18px; }
+            50% { height: 4px; }
+        }
+        
+        @keyframes smile {
+            0%, 70%, 100% { height: 20px; border-radius: 0 0 40px 40px; }
+            75% { height: 25px; border-radius: 50%; }
+        }
+        
+        @keyframes heartFloat {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-400px) scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes floatParticle {
+            to {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 3s infinite;
+        }
+        
+        /* Responsividade para iPhone */
+        @media (max-width: 480px) {
+            h1 { font-size: 2.3rem; }
+            .baby-name { font-size: 2.8rem; }
+            .countdown-container { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .countdown-value { font-size: 2.3rem; }
+            .countdown-label { font-size: 0.95rem; }
+            .baby-animation { transform: scale(0.9); }
+            .baby-info { font-size: 1.1rem; }
+        }
+        
+        @media (max-width: 360px) {
+            h1 { font-size: 2rem; }
+            .baby-name { font-size: 2.4rem; }
+            .countdown-value { font-size: 2rem; }
+            .countdown-label { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fundo -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Contagem Regressiva para o Nascimento</h1>
+            <div class="baby-info">
+                <p>Estamos ansiosos para conhecer:</p>
+                <div class="baby-name-container">
+                    <div class="baby-name pulse" id="babyName">Mavie</div>
+                    <div class="name-switch" id="nameSwitch">Alternar para Theo</div>
+                </div>
+                <p>Já se passaram <strong>6 meses e 5 dias</strong> de gestação</p>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">66% Completo</div>
+        </div>
+        
+        <div class="countdown-container">
+            <div class="countdown-item">
+                <div class="countdown-value" id="days">00</div>
+                <div class="countdown-label">Dias</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="hours">00</div>
+                <div class="countdown-label">Horas</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="minutes">00</div>
+                <div class="countdown-label">Minutos</div>
+            </div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="seconds">00</div>
+                <div class="countdown-label">Segundos</div>
+            </div>
+        </div>
+        
+        <div class="animation-section">
+            <div class="baby-animation">
+                <div class="baby">
+                    <div class="face">
+                        <div class="eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+                <div class="heart"><i class="fas fa-heart"></i></div>
+                <div class="heart"><i class="fas fa-heart"></i></div>
+                <div class="heart"><i class="fas fa-heart"></i></div>
+                <div class="heart"><i class="fas fa-heart"></i></div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Desenvolvido com ❤️ para acompanhar esta jornada</p>
+            <p>A contagem persiste mesmo após fechar o navegador</p>
+        </div>
+    </div>
+
+    <script>
+        // Configuração das partículas de fundo
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Posição e tamanho aleatórios
+                const size = Math.random() * 5 + 2;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Configuração da contagem regressiva com localStorage
+        const totalPregnancyDays = 280; // 40 semanas
+        const daysPassed = (6 * 30) + 5; // 6 meses (aproximados) + 5 dias = 185 dias
+        
+        // Verifica se já temos uma data de parto salva
+        let dueDate;
+        if(localStorage.getItem('babyDueDate')) {
+            dueDate = new Date(localStorage.getItem('babyDueDate'));
+        } else {
+            // Calcula a nova data de parto
+            const today = new Date();
+            dueDate = new Date();
+            dueDate.setDate(today.getDate() + (totalPregnancyDays - daysPassed));
+            // Salva no localStorage
+            localStorage.setItem('babyDueDate', dueDate.toISOString());
+        }
+        
+        // Verifica se já temos um nome salvo
+        let babyName = localStorage.getItem('babyName') || 'Mavie';
+        document.getElementById('babyName').textContent = babyName;
+        
+        // Atualiza o texto do botão
+        document.getElementById('nameSwitch').textContent = 
+            babyName === 'Mavie' ? 'Alternar para Theo' : 'Alternar para Mavie';
+        
+        // Função para alternar o nome
+        document.getElementById('nameSwitch').addEventListener('click', function() {
+            babyName = babyName === 'Mavie' ? 'Theo' : 'Mavie';
+            document.getElementById('babyName').textContent = babyName;
+            this.textContent = babyName === 'Mavie' ? 'Alternar para Theo' : 'Alternar para Mavie';
+            localStorage.setItem('babyName', babyName);
+        });
+        
+        function updateCountdown() {
+            const now = new Date();
+            const diff = dueDate - now;
+            
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.getElementById('babyName').textContent = babyName + ' chegou! 🎉';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // Atualiza a barra de progresso
+            const totalDiff = totalPregnancyDays * 24 * 60 * 60 * 1000;
+            const passedTime = totalDiff - (dueDate - now);
+            const progress = (passedTime / totalDiff) * 100;
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${Math.min(progress, 100)}%`;
+            progressBar.textContent = `${Math.floor(progress)}% Completo`;
+        }
+        
+        // Inicializa as partículas
+        createParticles();
+        
+        // Atualiza a contagem a cada segundo
+        setInterval(updateCountdown, 1000);
+        updateCountdown(); // Inicializa imediatamente
+    </script>
+</body>
+</html>
