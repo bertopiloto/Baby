@@ -287,7 +287,6 @@
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #ff9ff3, #48dbfb);
-            width: 66%;
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -399,12 +398,12 @@
                     <div class="baby-name pulse" id="babyName">Mavie</div>
                     <div class="name-switch" id="nameSwitch">Alternar para Theo</div>
                 </div>
-                <p>Já se passaram <strong>6 meses e 5 dias</strong> de gestação</p>
+                <p>Já se passaram <strong id="gestation-passed">25 semanas e 2 dias</strong> de gestação</p>
             </div>
         </div>
         
         <div class="progress-container">
-            <div class="progress-bar">66% Completo</div>
+            <div class="progress-bar" id="progressBar">66% Completo</div>
         </div>
         
         <div class="countdown-container">
@@ -480,17 +479,21 @@
         
         // Configuração da contagem regressiva com localStorage
         const totalPregnancyDays = 280; // 40 semanas
-        const daysPassed = (6 * 30) + 5; // 6 meses (aproximados) + 5 dias = 185 dias
         
         // Verifica se já temos uma data de parto salva
         let dueDate;
         if(localStorage.getItem('babyDueDate')) {
             dueDate = new Date(localStorage.getItem('babyDueDate'));
         } else {
-            // Calcula a nova data de parto
+            // Calcula a nova data de parto baseada na semana atual
             const today = new Date();
-            dueDate = new Date();
+            dueDate = new Date(today);
+            
+            // Considerando que estamos na 25ª semana + 2 dias
+            // Dias já passados: 25*7 + 2 = 177 dias
+            const daysPassed = 177;
             dueDate.setDate(today.getDate() + (totalPregnancyDays - daysPassed));
+            
             // Salva no localStorage
             localStorage.setItem('babyDueDate', dueDate.toISOString());
         }
@@ -511,19 +514,31 @@
             localStorage.setItem('babyName', babyName);
         });
         
+        // Função para formatar tempo de gestação
+        function formatGestationTime(daysPassed) {
+            const weeks = Math.floor(daysPassed / 7);
+            const days = daysPassed % 7;
+            return `${weeks} semanas e ${days} dias`;
+        }
+        
         function updateCountdown() {
             const now = new Date();
             const diff = dueDate - now;
             
             if (diff <= 0) {
+                // O bebê chegou!
                 document.getElementById('days').textContent = '00';
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
                 document.getElementById('seconds').textContent = '00';
                 document.getElementById('babyName').textContent = babyName + ' chegou! 🎉';
+                document.getElementById('gestation-passed').textContent = '40 semanas e 0 dias';
+                document.getElementById('progressBar').textContent = '100% Completo';
+                document.getElementById('progressBar').style.width = '100%';
                 return;
             }
             
+            // Calcula dias, horas, minutos e segundos restantes
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -534,13 +549,17 @@
             document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
             
+            // Calcula dias já passados
+            const daysPassed = totalPregnancyDays - days;
+            const progress = (daysPassed / totalPregnancyDays) * 100;
+            
             // Atualiza a barra de progresso
-            const totalDiff = totalPregnancyDays * 24 * 60 * 60 * 1000;
-            const passedTime = totalDiff - (dueDate - now);
-            const progress = (passedTime / totalDiff) * 100;
-            const progressBar = document.querySelector('.progress-bar');
+            const progressBar = document.getElementById('progressBar');
             progressBar.style.width = `${Math.min(progress, 100)}%`;
             progressBar.textContent = `${Math.floor(progress)}% Completo`;
+            
+            // Atualiza o tempo de gestação passado
+            document.getElementById('gestation-passed').textContent = formatGestationTime(daysPassed);
         }
         
         // Inicializa as partículas
