@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contagem para Mavie ou Theo</title>
+    <title>Contagem para Mavie</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
@@ -105,19 +105,12 @@
             transition: all 0.5s ease;
         }
         
-        .name-switch {
-            display: inline-block;
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .name-switch:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .love-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #ff9ff3;
+            margin-top: 10px;
+            text-shadow: 0 0 5px rgba(255, 159, 243, 0.5);
         }
         
         @keyframes nameGlow {
@@ -370,6 +363,7 @@
         @media (max-width: 480px) {
             h1 { font-size: 2.3rem; }
             .baby-name { font-size: 2.8rem; }
+            .love-message { font-size: 1.5rem; }
             .countdown-container { grid-template-columns: 1fr 1fr; gap: 12px; }
             .countdown-value { font-size: 2.3rem; }
             .countdown-label { font-size: 0.95rem; }
@@ -380,6 +374,7 @@
         @media (max-width: 360px) {
             h1 { font-size: 2rem; }
             .baby-name { font-size: 2.4rem; }
+            .love-message { font-size: 1.3rem; }
             .countdown-value { font-size: 2rem; }
             .countdown-label { font-size: 0.85rem; }
         }
@@ -395,15 +390,15 @@
             <div class="baby-info">
                 <p>Estamos ansiosos para conhecer:</p>
                 <div class="baby-name-container">
-                    <div class="baby-name pulse" id="babyName">Mavie</div>
-                    <div class="name-switch" id="nameSwitch">Alternar para Theo</div>
+                    <div class="baby-name pulse">Mavie</div>
+                    <div class="love-message">Papai e mamãe já amam!</div>
                 </div>
-                <p>Já se passaram <strong id="gestation-passed">25 semanas e 2 dias</strong> de gestação</p>
+                <p>Já se passaram <strong id="gestation-passed">27 semanas e 6 dias</strong> de gestação</p>
             </div>
         </div>
         
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar">66% Completo</div>
+            <div class="progress-bar" id="progressBar">71% Completo</div>
         </div>
         
         <div class="countdown-container">
@@ -478,41 +473,24 @@
         }
         
         // Configuração da contagem regressiva com localStorage
-        const totalPregnancyDays = 280; // 40 semanas
+        b
         
         // Verifica se já temos uma data de parto salva
         let dueDate;
         if(localStorage.getItem('babyDueDate')) {
             dueDate = new Date(localStorage.getItem('babyDueDate'));
         } else {
-            // Calcula a nova data de parto baseada na semana atual
+            // Calcula a nova data de parto baseada na semana atual (27 semanas e 6 dias)
             const today = new Date();
             dueDate = new Date(today);
             
-            // Considerando que estamos na 25ª semana + 2 dias
-            // Dias já passados: 25*7 + 2 = 177 dias
-            const daysPassed = 177;
+            // Dias já passados: 27*7 + 6 = 195 dias
+            const daysPassed = 195;
             dueDate.setDate(today.getDate() + (totalPregnancyDays - daysPassed));
             
             // Salva no localStorage
             localStorage.setItem('babyDueDate', dueDate.toISOString());
         }
-        
-        // Verifica se já temos um nome salvo
-        let babyName = localStorage.getItem('babyName') || 'Mavie';
-        document.getElementById('babyName').textContent = babyName;
-        
-        // Atualiza o texto do botão
-        document.getElementById('nameSwitch').textContent = 
-            babyName === 'Mavie' ? 'Alternar para Theo' : 'Alternar para Mavie';
-        
-        // Função para alternar o nome
-        document.getElementById('nameSwitch').addEventListener('click', function() {
-            babyName = babyName === 'Mavie' ? 'Theo' : 'Mavie';
-            document.getElementById('babyName').textContent = babyName;
-            this.textContent = babyName === 'Mavie' ? 'Alternar para Theo' : 'Alternar para Mavie';
-            localStorage.setItem('babyName', babyName);
-        });
         
         // Função para formatar tempo de gestação
         function formatGestationTime(daysPassed) {
@@ -531,7 +509,7 @@
                 document.getElementById('hours').textContent = '00';
                 document.getElementById('minutes').textContent = '00';
                 document.getElementById('seconds').textContent = '00';
-                document.getElementById('babyName').textContent = babyName + ' chegou! 🎉';
+                document.querySelector('.baby-name').textContent = 'Mavie chegou! 🎉';
                 document.getElementById('gestation-passed').textContent = '40 semanas e 0 dias';
                 document.getElementById('progressBar').textContent = '100% Completo';
                 document.getElementById('progressBar').style.width = '100%';
