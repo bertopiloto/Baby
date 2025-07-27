@@ -92,7 +92,7 @@
         }
         
         .baby-name {
-            font-family: 'Dancing Script', cursive;
+            font-family: 'Dancing+Script', cursive;
             font-size: 3.5rem;
             font-weight: 700;
             color: #48dbfb;
@@ -106,7 +106,7 @@
         }
         
         .love-message {
-            font-family: 'Dancing Script', cursive;
+            font-family: 'Dancing+Script', cursive;
             font-size: 1.8rem;
             color: #ff9ff3;
             margin-top: 10px;
@@ -398,14 +398,14 @@
                 <div class="baby-name-container">
                     <div class="baby-name pulse">Mavie</div>
                     <div class="love-message">Papai e mamãe já amam!</div>
-                    <div class="size-info">Tamanho: ~38cm (tamanho de uma abóbora)</div>
+                    <div class="size-info">Tamanho: ~36cm (tamanho de uma couve-flor)</div>
                 </div>
-                <p>Já se passaram <strong id="gestation-passed">29 semanas e 0 dias</strong> de gestação</p>
+                <p>Já se passaram <strong id="gestation-passed">27 semanas e 6 dias</strong> de gestação</p>
             </div>
         </div>
         
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar">72% Completo</div>
+            <div class="progress-bar" id="progressBar">70% Completo</div>
         </div>
         
         <div class="countdown-container">
@@ -487,12 +487,12 @@
         if(localStorage.getItem('babyDueDate')) {
             dueDate = new Date(localStorage.getItem('babyDueDate'));
         } else {
-            // Calcula a nova data de parto baseada na semana atual (29 semanas completas)
+            // Calcula a nova data de parto baseada na semana atual (27 semanas e 6 dias)
             const today = new Date();
             dueDate = new Date(today);
             
-            // Dias já passados: 29*7 = 203 dias
-            const daysPassed = 203;
+            // Dias já passados: 27*7 + 6 = 195 dias
+            const daysPassed = 195;
             dueDate.setDate(today.getDate() + (totalPregnancyDays - daysPassed));
             
             // Salva no localStorage
