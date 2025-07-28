@@ -92,7 +92,7 @@
         }
         
         .baby-name {
-            font-family: 'Dancing+Script', cursive;
+            font-family: 'Dancing Script', cursive;
             font-size: 3.5rem;
             font-weight: 700;
             color: #48dbfb;
@@ -106,7 +106,7 @@
         }
         
         .love-message {
-            font-family: 'Dancing+Script', cursive;
+            font-family: 'Dancing Script', cursive;
             font-size: 1.8rem;
             color: #ff9ff3;
             margin-top: 10px;
@@ -400,7 +400,7 @@
                     <div class="love-message">Papai e mamãe já amam!</div>
                     <div class="size-info">Tamanho: ~36cm (tamanho de uma couve-flor)</div>
                 </div>
-                <p>Já se passaram <strong id="gestation-passed">27 semanas e 6 dias</strong> de gestação</p>
+                <p>Já se passaram <strong id="gestation-passed">28 semanas e 1 dia</strong> de gestação</p>
             </div>
         </div>
         
@@ -482,22 +482,38 @@
         // Configuração da contagem regressiva com localStorage
         const totalPregnancyDays = 280; // 40 semanas
         
-        // Verifica se já temos uma data de parto salva
-        let dueDate;
-        if(localStorage.getItem('babyDueDate')) {
-            dueDate = new Date(localStorage.getItem('babyDueDate'));
-        } else {
-            // Calcula a nova data de parto baseada na semana atual (27 semanas e 6 dias)
-            const today = new Date();
-            dueDate = new Date(today);
-            
-            // Dias já passados: 27*7 + 6 = 195 dias
-            const daysPassed = 195;
-            dueDate.setDate(today.getDate() + (totalPregnancyDays - daysPassed));
-            
-            // Salva no localStorage
-            localStorage.setItem('babyDueDate', dueDate.toISOString());
+        // Data de concepção (última menstruação + 2 semanas)
+        function getConceptionDate() {
+            if(localStorage.getItem('babyConceptionDate')) {
+                return new Date(localStorage.getItem('babyConceptionDate'));
+            } else {
+                const today = new Date();
+                const conceptionDate = new Date(today);
+                
+                // AJUSTE AQUI: Coloque o número correto de dias já passados
+                // Exemplo: 28 semanas e 1 dia = 28*7 + 1 = 197 dias
+                const daysPassed = 197;
+                conceptionDate.setDate(today.getDate() - daysPassed);
+                
+                localStorage.setItem('babyConceptionDate', conceptionDate.toISOString());
+                return conceptionDate;
+            }
         }
+        
+        // Calcula a data prevista para o parto (concepção + 280 dias)
+        function getDueDate(conceptionDate) {
+            if(localStorage.getItem('babyDueDate')) {
+                return new Date(localStorage.getItem('babyDueDate'));
+            } else {
+                const dueDate = new Date(conceptionDate);
+                dueDate.setDate(dueDate.getDate() + totalPregnancyDays);
+                localStorage.setItem('babyDueDate', dueDate.toISOString());
+                return dueDate;
+            }
+        }
+        
+        const conceptionDate = getConceptionDate();
+        const dueDate = getDueDate(conceptionDate);
         
         // Função para formatar tempo de gestação
         function formatGestationTime(daysPassed) {
@@ -506,9 +522,17 @@
             return `${weeks} semanas e ${days} dias`;
         }
         
+        // Calcula dias passados desde a concepção
+        function getDaysPassed() {
+            const today = new Date();
+            const diff = today - conceptionDate;
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
+        
         function updateCountdown() {
             const now = new Date();
             const diff = dueDate - now;
+            const daysPassed = getDaysPassed();
             
             if (diff <= 0) {
                 // O bebê chegou!
@@ -534,8 +558,7 @@
             document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
             
-            // Calcula dias já passados
-            const daysPassed = totalPregnancyDays - days;
+            // Calcula progresso
             const progress = (daysPassed / totalPregnancyDays) * 100;
             
             // Atualiza a barra de progresso
